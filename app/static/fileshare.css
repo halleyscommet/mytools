@@ -259,6 +259,15 @@ td {
   background: #111;
 }
 
+.file-preview-video {
+  width: 96px;
+  height: 64px;
+  object-fit: cover;
+  border: 1px solid #444;
+  display: block;
+  background: #111;
+}
+
 .file-preview-text {
   width: 100%;
   max-width: 260px;

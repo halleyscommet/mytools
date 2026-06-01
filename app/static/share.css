@@ -55,6 +55,7 @@ h1 {
 }
 
 .preview-image,
+.preview-video,
 .preview-placeholder {
   width: 100%;
   margin: 0 0 1.5rem;
@@ -66,6 +67,11 @@ h1 {
   display: block;
   max-height: 52vh;
   object-fit: contain;
+}
+
+.preview-video {
+  display: block;
+  max-height: 52vh;
 }
 
 .preview-text {

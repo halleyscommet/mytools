@@ -3,7 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ file.display_name }}</title>
+    <title>{{ page_title }}</title>
+    <meta name="description" content="{{ page_description }}" />
+    <meta property="og:title" content="{{ page_title }}" />
+    <meta property="og:description" content="{{ page_description }}" />
+    <meta property="og:url" content="{{ file.share_url }}" />
+    <meta property="og:type" content="{{ og_type }}" />
+    <meta name="twitter:card" content="{{ twitter_card }}" />
+    {% if file.is_image %}
+    <meta property="og:image" content="{{ file.preview_url }}" />
+    <meta property="og:image:alt" content="{{ file.display_name }}" />
+    {% elif file.mime_type.startswith('video/') %}
+    <meta property="og:video" content="{{ file.preview_url }}" />
+    <meta property="og:video:secure_url" content="{{ file.preview_url }}" />
+    <meta property="og:video:type" content="{{ file.mime_type }}" />
+    {% endif %}
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='share.css') }}"
@@ -22,6 +36,11 @@
         src="{{ file.preview_url }}"
         alt="{{ file.display_name }}"
       />
+      {% elif file.mime_type.startswith('video/') %}
+      <video class="preview-video" controls preload="metadata">
+        <source src="{{ file.preview_url }}" type="{{ file.mime_type }}" />
+        Your browser does not support embedded video.
+      </video>
       {% elif file.preview_kind == "text" and file.preview_text %}
       <pre class="preview-text">
 {{ file.preview_text }}{% if file.preview_truncated %}

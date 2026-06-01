@@ -183,6 +183,14 @@ def _preview_details(
             "preview_label": "Image preview",
         }
 
+    if mime_type.startswith("video/"):
+        return {
+            "preview_kind": "video",
+            "preview_text": "",
+            "preview_truncated": False,
+            "preview_label": "Video preview",
+        }
+
     if _is_text_previewable(mime_type, display_name):
         preview_text, truncated = _build_text_preview(file_path)
         return {
@@ -310,6 +318,29 @@ def _file_items() -> list[dict[str, object]]:
     return items
 
 
+def _share_page_metadata(
+    display_name: str, size: int, modified: datetime, mime_type: str
+) -> dict[str, str]:
+    description = f"Shared file from My Tools: {display_name}"
+    if size:
+        description = f"{description} ({size} bytes)"
+    description = f"{description} · Updated {modified.strftime('%Y-%m-%d %H:%M')}"
+
+    metadata = {
+        "page_title": display_name,
+        "page_description": description,
+        "og_type": "website",
+        "twitter_card": "summary",
+    }
+
+    if mime_type.startswith("image/"):
+        metadata["twitter_card"] = "summary_large_image"
+    elif mime_type.startswith("video/"):
+        metadata["og_type"] = "video.other"
+
+    return metadata
+
+
 @fileshare_bp.route("/", methods=["GET", "POST"])
 @login_required
 def index():
@@ -416,7 +447,14 @@ def public_share(token: str):
         "preview_url": url_for("fileshare.public_file", token=token, _external=True),
     }
 
-    return render_template("fileshare/share.html", file=file_item)
+    share_metadata = _share_page_metadata(
+        file_item["display_name"],
+        file_item["size"],
+        file_item["modified"],
+        file_item["mime_type"],
+    )
+
+    return render_template("fileshare/share.html", file=file_item, **share_metadata)
 
 
 @fileshare_bp.route("/share/<token>/file")
@@ -433,6 +471,9 @@ def public_file(token: str):
         _uploads_dir(),
         stored_name,
         download_name=record.get("original_name") or _display_name(stored_name),
+        mimetype=record.get("mime_type") or _guess_mime_type(
+            record.get("original_name", ""), stored_name
+        ),
     )
 
 

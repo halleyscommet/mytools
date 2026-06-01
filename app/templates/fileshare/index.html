@@ -57,6 +57,14 @@
                     src="{{ file.preview_url }}"
                     alt="{{ file.display_name }} preview"
                   />
+                  {% elif file.mime_type.startswith('video/') %}
+                  <video
+                    class="file-preview-video"
+                    src="{{ file.preview_url }}"
+                    muted
+                    playsinline
+                    preload="metadata"
+                  ></video>
                   {% elif file.preview_kind == "text" and file.preview_text %}
                   <pre class="file-preview-text">
 {{ file.preview_text }}{% if file.preview_truncated %}
