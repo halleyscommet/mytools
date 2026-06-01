@@ -2,14 +2,23 @@ FROM python:3.14-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    UV_SYSTEM_PYTHON=1 \
     PORT=8000
 
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY pyproject.toml README.md ./
 
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir flask gunicorn python-dotenv
+ADD https://astral.sh/uv/install.sh /tmp/uv-installer.sh
+
+RUN sh /tmp/uv-installer.sh \
+    && mv /root/.local/bin/uv /usr/local/bin/uv \
+    && rm /tmp/uv-installer.sh \
+    && uv pip install --system --no-cache flask gunicorn python-dotenv
 
 COPY app ./app
 COPY main.py ./main.py
