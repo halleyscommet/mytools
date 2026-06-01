@@ -1,0 +1,286 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  font-family: "Inter", monospace;
+}
+
+.files-page {
+  min-height: 100vh;
+}
+
+.files-page-upload {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.files-page-browse {
+  width: min(100vw - 2rem, 1600px);
+  margin: 0 auto;
+  padding: 1rem;
+  display: grid;
+  align-items: start;
+}
+
+.card,
+.browser-shell {
+  border: 1px solid #fff;
+  background: #000;
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  padding: 3rem;
+}
+
+.browser-shell {
+  width: 100%;
+  min-height: calc(100vh - 2rem);
+  padding: 1.5rem;
+}
+
+.eyebrow {
+  margin-bottom: 0.75rem;
+  color: #888;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+h3 {
+  color: #fff;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lead,
+.meta,
+.empty-state p,
+.panel-copy p {
+  line-height: 1.6;
+}
+
+.lead {
+  margin-bottom: 2rem;
+}
+
+.limit-note {
+  margin-bottom: 1rem;
+}
+
+.message {
+  color: #fff;
+  border: 1px solid #444;
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.upload-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.upload-form label {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+.upload-form input[type="file"] {
+  width: 100%;
+  background: #000;
+  border: 1px solid #444;
+  color: #e0e0e0;
+  padding: 0.75rem;
+  font: inherit;
+}
+
+.upload-status {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.upload-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.upload-status-value {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.progress-track {
+  width: 100%;
+  height: 0.85rem;
+  border: 1px solid #444;
+  background: #000;
+  overflow: hidden;
+}
+
+.progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #fff;
+  transition: width 140ms linear;
+}
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 0.65rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button:hover,
+.button:hover {
+  background: #e0e0e0;
+}
+
+.text-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.text-link:hover {
+  text-decoration: underline;
+}
+
+.footer-links {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.meta {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.browser-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.header-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.browser {
+  width: 100%;
+  min-height: calc(100vh - 6rem);
+  border: 1px solid #444;
+  padding: 1rem;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.9rem 0.75rem;
+  border-bottom: 1px solid #333;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888;
+}
+
+td {
+  color: #e0e0e0;
+}
+
+.empty-state {
+  min-height: calc(100vh - 12rem);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #888;
+  gap: 0.5rem;
+}
+
+@media (max-width: 800px) {
+  .files-page-browse {
+    width: min(100vw - 1rem, 1600px);
+    padding: 0.5rem;
+  }
+
+  .files-page-upload {
+    padding: 0.5rem;
+  }
+
+  .card {
+    padding: 2rem 1.25rem;
+  }
+
+  .browser-shell {
+    padding: 1rem;
+  }
+
+  .browser {
+    min-height: calc(100vh - 8rem);
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='dashboard.css') }}"
+    />
+  </head>
+  <body>
+    <main class="card">
+      <p class="eyebrow">My Tools</p>
+      <h1>Dashboard</h1>
+      <p class="lead">
+        Signed in with session ID {{ session_id or "unknown" }}.
+      </p>
+
+      <section class="panel">
+        <div class="panel-copy">
+          <p class="eyebrow">Quick Actions</p>
+          <a
+            class="text-link file-share-link"
+            href="{{ url_for('fileshare.index') }}"
+            >File Share</a
+          >
+        </div>
+
+        <a class="button" href="{{ url_for('auth.logout') }}">Log out</a>
+      </section>
+    </main>
+  </body>
+</html>

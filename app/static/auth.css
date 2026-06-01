@@ -1,0 +1,78 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  font-family: "Inter", monospace;
+  color: #fff;
+}
+
+.card {
+  border: 1px solid #fff;
+  padding: 3rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+h1 {
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  color: #fff;
+}
+
+.error {
+  color: #f00;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+label {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+  color: #888;
+}
+
+input[type="password"] {
+  width: 100%;
+  background: #000;
+  border: 1px solid #444;
+  color: #e0e0e0;
+  padding: 0.6rem 0.75rem;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  margin-bottom: 1.5rem;
+}
+
+input[type="password"]:focus {
+  border-color: #888;
+}
+
+button {
+  width: 100%;
+  background: #fff;
+  color: #000;
+  border: none;
+  padding: 0.65rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
