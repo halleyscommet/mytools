@@ -106,7 +106,7 @@ def _load_metadata() -> dict[str, dict[str, str]]:
 
     try:
         payload = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return {}
 
     files = payload.get("files", {})
@@ -144,7 +144,11 @@ def _guess_mime_type(original_name: str, stored_name: str = "") -> str:
 
 def _is_text_previewable(mime_type: str, file_name: str) -> bool:
     suffix = Path(file_name).suffix.lower()
-    return mime_type.startswith("text/") or mime_type in TEXT_PREVIEW_MIME_TYPES or suffix in TEXT_PREVIEW_EXTENSIONS
+    return (
+        mime_type.startswith("text/")
+        or mime_type in TEXT_PREVIEW_MIME_TYPES
+        or suffix in TEXT_PREVIEW_EXTENSIONS
+    )
 
 
 def _build_text_preview(file_path: Path) -> tuple[str, bool]:
@@ -158,12 +162,17 @@ def _build_text_preview(file_path: Path) -> tuple[str, bool]:
     lines = text.splitlines()
     preview_lines = lines[:TEXT_PREVIEW_LINE_LIMIT]
     preview = "\n".join(preview_lines).rstrip()
-    truncated = len(lines) > TEXT_PREVIEW_LINE_LIMIT or len(raw_bytes) == TEXT_PREVIEW_BYTE_LIMIT
+    truncated = (
+        len(lines) > TEXT_PREVIEW_LINE_LIMIT
+        or len(raw_bytes) == TEXT_PREVIEW_BYTE_LIMIT
+    )
 
     return preview, truncated
 
 
-def _preview_details(file_path: Path, mime_type: str, display_name: str) -> dict[str, object]:
+def _preview_details(
+    file_path: Path, mime_type: str, display_name: str
+) -> dict[str, object]:
     suffix = file_path.suffix.lower()
 
     if mime_type.startswith("image/"):
@@ -183,7 +192,9 @@ def _preview_details(file_path: Path, mime_type: str, display_name: str) -> dict
             "preview_label": "Text preview",
         }
 
-    preview_label = "Blender file" if suffix == ".blend" else (mime_type or "unknown file type")
+    preview_label = (
+        "Blender file" if suffix == ".blend" else (mime_type or "unknown file type")
+    )
     return {
         "preview_kind": "generic",
         "preview_text": "",
@@ -251,8 +262,14 @@ def _upsert_metadata_for_file(
             "mime_type": mime_type or _guess_mime_type(original_name, stored_name),
         }
     else:
-        record["original_name"] = original_name or record.get("original_name") or _display_name(stored_name)
-        record["mime_type"] = mime_type or record.get("mime_type") or _guess_mime_type(original_name, stored_name)
+        record["original_name"] = (
+            original_name or record.get("original_name") or _display_name(stored_name)
+        )
+        record["mime_type"] = (
+            mime_type
+            or record.get("mime_type")
+            or _guess_mime_type(original_name, stored_name)
+        )
 
     _save_metadata(records)
 
@@ -267,7 +284,9 @@ def _file_items() -> list[dict[str, object]]:
         record = records[path.name]
         share_token = record["share_token"]
         original_name = record.get("original_name") or _display_name(path.name)
-        mime_type = record.get("mime_type") or _guess_mime_type(original_name, path.name)
+        mime_type = record.get("mime_type") or _guess_mime_type(
+            original_name, path.name
+        )
         preview_details = _preview_details(path, mime_type, original_name)
         items.append(
             {
@@ -279,7 +298,9 @@ def _file_items() -> list[dict[str, object]]:
                 "is_image": mime_type.startswith("image/"),
                 **preview_details,
                 "share_token": share_token,
-                "share_url": url_for("fileshare.public_share", token=share_token, _external=True),
+                "share_url": url_for(
+                    "fileshare.public_share", token=share_token, _external=True
+                ),
                 "download_url": url_for("fileshare.public_download", token=share_token),
                 "preview_url": url_for("fileshare.public_file", token=share_token),
             }
@@ -305,7 +326,9 @@ def index():
                 continue
             target_path = _uploads_dir() / _stored_name(upload.filename)
             upload.save(target_path)
-            _upsert_metadata_for_file(target_path.name, upload.filename, upload.mimetype)
+            _upsert_metadata_for_file(
+                target_path.name, upload.filename, upload.mimetype
+            )
             saved_count += 1
 
         if saved_count:
@@ -372,8 +395,12 @@ def public_share(token: str):
         abort(404)
 
     stat = file_path.stat()
-    mime_type = record.get("mime_type") or _guess_mime_type(record.get("original_name", ""), stored_name)
-    preview_details = _preview_details(file_path, mime_type, record.get("original_name") or _display_name(stored_name))
+    mime_type = record.get("mime_type") or _guess_mime_type(
+        record.get("original_name", ""), stored_name
+    )
+    preview_details = _preview_details(
+        file_path, mime_type, record.get("original_name") or _display_name(stored_name)
+    )
     file_item = {
         "stored_name": stored_name,
         "display_name": record.get("original_name") or _display_name(stored_name),
@@ -383,7 +410,9 @@ def public_share(token: str):
         "is_image": mime_type.startswith("image/"),
         **preview_details,
         "share_url": url_for("fileshare.public_share", token=token, _external=True),
-        "download_url": url_for("fileshare.public_download", token=token, _external=True),
+        "download_url": url_for(
+            "fileshare.public_download", token=token, _external=True
+        ),
         "preview_url": url_for("fileshare.public_file", token=token, _external=True),
     }
 

@@ -58,8 +58,10 @@
                     alt="{{ file.display_name }} preview"
                   />
                   {% elif file.preview_kind == "text" and file.preview_text %}
-                  <pre class="file-preview-text">{{ file.preview_text }}{% if file.preview_truncated %}
-…{% endif %}</pre>
+                  <pre class="file-preview-text">
+{{ file.preview_text }}{% if file.preview_truncated %}
+…{% endif %}</pre
+                  >
                   {% else %}
                   <div class="file-preview-placeholder">
                     <span>FILE</span>
