@@ -31,6 +31,8 @@ body {
   width: min(100vw - 2rem, 1600px);
   margin: 0 auto;
   padding: 1rem;
+  height: 100vh;
+  overflow: hidden;
   display: grid;
   align-items: start;
 }
@@ -49,8 +51,11 @@ body {
 
 .browser-shell {
   width: 100%;
-  min-height: calc(100vh - 2rem);
+  height: calc(100vh - 2rem);
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .eyebrow {
@@ -114,7 +119,7 @@ h3 {
   width: 100%;
   background: #000;
   border: 1px solid #444;
-  color: #e0e0e0;
+  color: #fff;
   padding: 0.75rem;
   font: inherit;
 }
@@ -172,11 +177,6 @@ button,
   text-decoration: none;
 }
 
-button:hover,
-.button:hover {
-  background: #e0e0e0;
-}
-
 .text-link {
   color: #fff;
   text-decoration: none;
@@ -218,7 +218,8 @@ button:hover,
 
 .browser {
   width: 100%;
-  min-height: calc(100vh - 6rem);
+  flex: 1;
+  min-height: 0;
   border: 1px solid #444;
   padding: 1rem;
   overflow: auto;
@@ -227,6 +228,7 @@ button:hover,
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 1080px;
 }
 
 th,
@@ -245,11 +247,102 @@ th {
 }
 
 td {
-  color: #e0e0e0;
+  color: #fff;
+}
+
+.file-preview-thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 1px solid #444;
+  display: block;
+  background: #111;
+}
+
+.file-preview-text {
+  width: 100%;
+  max-width: 260px;
+  max-height: 140px;
+  overflow: auto;
+  border: 1px solid #444;
+  background: #0d0d0d;
+  color: #d9d9d9;
+  padding: 0.65rem;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.file-preview-placeholder {
+  width: 64px;
+  height: 64px;
+  border: 1px solid #444;
+  display: grid;
+  place-items: center;
+  color: #888;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  gap: 0.2rem;
+  text-align: center;
+  padding: 0.35rem;
+}
+
+.file-preview-placeholder span:last-child {
+  color: #666;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  line-height: 1.2;
+}
+
+.file-name {
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.file-meta {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.link-stack,
+.row-actions {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.row-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.row-button:hover {
+  text-decoration: underline;
+  background: transparent;
+}
+
+.danger-button {
+  color: #ff8a8a;
 }
 
 .empty-state {
-  min-height: calc(100vh - 12rem);
+  min-height: 35vh;
   display: grid;
   place-items: center;
   text-align: center;
@@ -273,14 +366,19 @@ td {
 
   .browser-shell {
     padding: 1rem;
+    height: calc(100vh - 1rem);
   }
 
   .browser {
-    min-height: calc(100vh - 8rem);
+    min-height: 0;
   }
 
   th,
   td {
+    white-space: nowrap;
+  }
+
+  .row-button {
     white-space: nowrap;
   }
 }

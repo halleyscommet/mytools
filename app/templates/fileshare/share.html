@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ file.display_name }}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='share.css') }}"
+    />
+  </head>
+  <body>
+    <main class="card share-card">
+      <h1>{{ file.display_name }}</h1>
+      <p class="meta">
+        {{ file.size }} bytes · {{ file.modified.strftime("%Y-%m-%d %H:%M") }}
+      </p>
+
+      {% if file.is_image %}
+      <img
+        class="preview-image"
+        src="{{ file.preview_url }}"
+        alt="{{ file.display_name }}"
+      />
+      {% elif file.preview_kind == "text" and file.preview_text %}
+      <pre class="preview-text">{{ file.preview_text }}{% if file.preview_truncated %}
+…{% endif %}</pre>
+      {% else %}
+      <div class="preview-placeholder">
+        <span>No preview available</span>
+        <span>{{ file.preview_label }}</span>
+      </div>
+      {% endif %}
+
+      <div class="actions">
+        <a class="button" href="{{ file.download_url }}">Download</a>
+      </div>
+
+      <p class="link-line">{{ file.share_url }}</p>
+    </main>
+
+    <script>
+      (() => {
+        const button = document.getElementById("copyShareLink");
+        if (!button) {
+          return;
+        }
+
+        button.addEventListener("click", async () => {
+          const copyUrl = button.dataset.copyUrl;
+          if (!copyUrl) {
+            return;
+          }
+
+          try {
+            await navigator.clipboard.writeText(copyUrl);
+            const originalText = button.textContent;
+            button.textContent = "Copied";
+            window.setTimeout(() => {
+              button.textContent = originalText;
+            }, 1200);
+          } catch (error) {
+            window.prompt("Copy this link:", copyUrl);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

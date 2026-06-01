@@ -24,7 +24,7 @@
             <a
               class="text-link"
               href="{{ url_for('fileshare.index', view='upload') }}"
-              >Upload files</a
+              >Upload</a
             >
             <a class="text-link" href="{{ url_for('index') }}"
               >Back to dashboard</a
@@ -39,25 +39,68 @@
           <table>
             <thead>
               <tr>
+                <th>Preview</th>
                 <th>Name</th>
                 <th>Size</th>
                 <th>Modified</th>
-                <th>Action</th>
+                <th>Link</th>
+                <th>Controls</th>
               </tr>
             </thead>
             <tbody>
               {% for file in files %}
               <tr>
-                <td>{{ file.display_name }}</td>
+                <td>
+                  {% if file.is_image %}
+                  <img
+                    class="file-preview-thumb"
+                    src="{{ file.preview_url }}"
+                    alt="{{ file.display_name }} preview"
+                  />
+                  {% elif file.preview_kind == "text" and file.preview_text %}
+                  <pre class="file-preview-text">{{ file.preview_text }}{% if file.preview_truncated %}
+…{% endif %}</pre>
+                  {% else %}
+                  <div class="file-preview-placeholder">
+                    <span>FILE</span>
+                    <span>{{ file.preview_label }}</span>
+                  </div>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="file-name">{{ file.display_name }}</div>
+                  <div class="file-meta">
+                    {{ file.mime_type or "Unknown type" }}
+                  </div>
+                </td>
                 <td>{{ file.size }} bytes</td>
                 <td>{{ file.modified.strftime("%Y-%m-%d %H:%M") }}</td>
                 <td>
-                  <a
-                    class="text-link"
-                    href="{{ url_for('fileshare.download_file', stored_name=file.stored_name) }}"
-                  >
-                    Download
-                  </a>
+                  <div class="link-stack">
+                    <button
+                      type="button"
+                      class="row-button copy-link-button"
+                      data-copy-url="{{ file.share_url }}"
+                    >
+                      Copy link
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <div class="row-actions">
+                    <a class="row-button" href="{{ file.download_url }}"
+                      >Download</a
+                    >
+                    <form
+                      method="post"
+                      action="{{ url_for('fileshare.delete_file', stored_name=file.stored_name) }}"
+                      onsubmit="return confirm('Delete {{ file.display_name|e }}?');"
+                    >
+                      <button type="submit" class="row-button danger-button">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
               {% endfor %}
@@ -75,10 +118,6 @@
       <section class="card upload-card">
         <p class="eyebrow">My Tools</p>
         <h1>File Share</h1>
-        <p class="lead">
-          Upload files into the project data directory and share them from one
-          place.
-        </p>
 
         <p class="meta limit-note">
           Maximum upload size: {{ upload_limit_label }}
@@ -103,21 +142,23 @@
 
         <div class="upload-status" id="uploadStatus" hidden>
           <div class="upload-status-row">
-            <span class="meta">Upload status</span>
+            <p class="meta" id="uploadStatusMessage">Ready to upload.</p>
+
             <span class="upload-status-value" id="uploadStatusText">0%</span>
           </div>
           <div class="progress-track" aria-hidden="true">
             <div class="progress-fill" id="uploadProgressFill"></div>
           </div>
-          <p class="meta" id="uploadStatusMessage">Ready to upload.</p>
         </div>
 
         <div class="footer-links">
-          <p class="meta">Session ID {{ session_id or "unknown" }}</p>
           <a
             class="text-link"
             href="{{ url_for('fileshare.index', view='browse') }}"
-            >Browse uploaded files</a
+            >Browse</a
+          >
+          <a class="text-link" href="{{ url_for('index') }}"
+            >Back to dashboard</a
           >
         </div>
       </section>
@@ -201,6 +242,32 @@
           });
 
           request.send(formData);
+        });
+      })();
+    </script>
+    {% else %}
+    <script>
+      (() => {
+        const copyButtons = document.querySelectorAll(".copy-link-button");
+
+        copyButtons.forEach((button) => {
+          button.addEventListener("click", async () => {
+            const copyUrl = button.dataset.copyUrl;
+            if (!copyUrl) {
+              return;
+            }
+
+            try {
+              await navigator.clipboard.writeText(copyUrl);
+              const originalText = button.textContent;
+              button.textContent = "Copied";
+              window.setTimeout(() => {
+                button.textContent = originalText;
+              }, 1200);
+            } catch (error) {
+              window.prompt("Copy this link:", copyUrl);
+            }
+          });
         });
       })();
     </script>
