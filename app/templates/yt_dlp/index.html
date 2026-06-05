@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>yt-dlp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='yt_dlp.css') }}" />
+  </head>
+  <body>
+    <main class="card tool-card">
+      <p class="eyebrow">My Tools</p>
+      <h1>yt-dlp</h1>
+      <p class="lead">
+        Paste a video URL and the downloaded file will be stored in file share automatically.
+      </p>
+
+      <p class="meta limit-note">Upload limit: {{ upload_limit_label }}</p>
+
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <p class="message">{{ messages[0] }}</p>
+      {% endif %}
+      {% endwith %}
+
+      <form class="tool-form" method="post">
+        <label for="url">Video URL</label>
+        <input
+          type="url"
+          id="url"
+          name="url"
+          placeholder="https://..."
+          autocomplete="off"
+          required
+        />
+        <button type="submit">Download to file share</button>
+      </form>
+
+      <div class="footer-links">
+        <a class="text-link" href="{{ url_for('fileshare.index', view='browse') }}">Browse file share</a>
+        <a class="text-link" href="{{ url_for('index') }}">Back to dashboard</a>
+      </div>
+    </main>
+  </body>
+</html>

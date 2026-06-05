@@ -1,6 +1,7 @@
 import json
 import mimetypes
 import os
+import shutil
 from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
@@ -8,6 +9,7 @@ from uuid import uuid4
 from flask import (
     Blueprint,
     abort,
+    has_request_context,
     flash,
     jsonify,
     redirect,
@@ -106,7 +108,7 @@ def _load_metadata() -> dict[str, dict[str, str]]:
 
     try:
         payload = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
-    except OSError, ValueError:
+    except (OSError, ValueError):
         return {}
 
     files = payload.get("files", {})
@@ -211,6 +213,59 @@ def _preview_details(
     }
 
 
+def _build_file_item(path: Path, record: dict[str, str]) -> dict[str, object]:
+    stat = path.stat()
+    original_name = record.get("original_name") or _display_name(path.name)
+    mime_type = record.get("mime_type") or _guess_mime_type(original_name, path.name)
+    preview_details = _preview_details(path, mime_type, original_name)
+    share_token = record["share_token"]
+
+    if has_request_context():
+        share_url = url_for("fileshare.public_share", token=share_token, _external=True)
+        download_url = url_for(
+            "fileshare.public_download", token=share_token, _external=False
+        )
+        preview_url = url_for(
+            "fileshare.public_file", token=share_token, _external=False
+        )
+    else:
+        share_url = f"/files/share/{share_token}"
+        download_url = f"/files/share/{share_token}/download"
+        preview_url = f"/files/share/{share_token}/file"
+
+    return {
+        "stored_name": path.name,
+        "display_name": original_name,
+        "size": stat.st_size,
+        "modified": datetime.fromtimestamp(stat.st_mtime),
+        "mime_type": mime_type,
+        "is_image": mime_type.startswith("image/"),
+        **preview_details,
+        "share_token": share_token,
+        "share_url": share_url,
+        "download_url": download_url,
+        "preview_url": preview_url,
+    }
+
+
+def store_file_for_share(
+    source_path: Path,
+    original_name: str | None = None,
+    mime_type: str = "",
+) -> dict[str, object]:
+    if not source_path.exists() or not source_path.is_file():
+        raise FileNotFoundError(source_path)
+
+    uploads_dir = _uploads_dir()
+    original_name = original_name or source_path.name
+    target_path = uploads_dir / _stored_name(original_name)
+    shutil.move(str(source_path), target_path)
+    _upsert_metadata_for_file(target_path.name, original_name, mime_type)
+
+    records = _load_metadata()
+    return _build_file_item(target_path, records[target_path.name])
+
+
 def _sync_metadata_with_files(file_names: list[str]) -> dict[str, dict[str, str]]:
     records = _load_metadata()
     changed = False
@@ -288,31 +343,7 @@ def _file_items() -> list[dict[str, object]]:
     items: list[dict[str, object]] = []
 
     for path in _iter_upload_files():
-        stat = path.stat()
-        record = records[path.name]
-        share_token = record["share_token"]
-        original_name = record.get("original_name") or _display_name(path.name)
-        mime_type = record.get("mime_type") or _guess_mime_type(
-            original_name, path.name
-        )
-        preview_details = _preview_details(path, mime_type, original_name)
-        items.append(
-            {
-                "stored_name": path.name,
-                "display_name": original_name,
-                "size": stat.st_size,
-                "modified": datetime.fromtimestamp(stat.st_mtime),
-                "mime_type": mime_type,
-                "is_image": mime_type.startswith("image/"),
-                **preview_details,
-                "share_token": share_token,
-                "share_url": url_for(
-                    "fileshare.public_share", token=share_token, _external=True
-                ),
-                "download_url": url_for("fileshare.public_download", token=share_token),
-                "preview_url": url_for("fileshare.public_file", token=share_token),
-            }
-        )
+        items.append(_build_file_item(path, records[path.name]))
 
     items.sort(key=lambda item: item["modified"], reverse=True)
     return items

@@ -19,11 +19,13 @@
 
       <section class="panel">
         <div class="panel-copy">
-          <p class="eyebrow">Quick Actions</p>
           <a
             class="text-link file-share-link"
             href="{{ url_for('fileshare.index') }}"
             >File Share</a
+          >
+          <a class="text-link yt-dlp-link" href="{{ url_for('yt_dlp.index') }}"
+            >yt-dlp</a
           >
         </div>
 

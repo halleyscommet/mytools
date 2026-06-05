@@ -14,9 +14,11 @@ def create_app() -> Flask:
     from .auth import auth_bp
     from .fileshare import fileshare_bp
     from .fileshare.routes import MAX_UPLOAD_BYTES, format_upload_limit
+    from .yt_dlp import yt_dlp_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(fileshare_bp)
+    app.register_blueprint(yt_dlp_bp)
     app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_BYTES
 
     @app.route("/")

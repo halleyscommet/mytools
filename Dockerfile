@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates curl \
+    && apt-get install -y --no-install-recommends ca-certificates curl ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml README.md ./
@@ -18,7 +18,7 @@ ADD https://astral.sh/uv/install.sh /tmp/uv-installer.sh
 RUN sh /tmp/uv-installer.sh \
     && mv /root/.local/bin/uv /usr/local/bin/uv \
     && rm /tmp/uv-installer.sh \
-    && uv pip install --system --no-cache flask gunicorn python-dotenv
+    && uv pip install --system --no-cache flask gunicorn python-dotenv yt-dlp
 
 COPY app ./app
 COPY main.py ./main.py
